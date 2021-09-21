@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using LexicalAnalyzer.Constants;
 using LexicalAnalyzer.Models;
 
 namespace LexicalAnalyzer.Tools
@@ -10,7 +12,7 @@ namespace LexicalAnalyzer.Tools
     {
         public static string ReplaceWhitespace(this string input, string replacement)
         {
-            Regex sWhitespace = new Regex(@"\s+");
+            Regex sWhitespace = new(@"\s+");
 
             return sWhitespace.Replace(input, replacement);
         }
@@ -32,5 +34,6 @@ namespace LexicalAnalyzer.Tools
                 return TokenType.Literal;
             return TokenType.Id;
         }
+       
     }
 }

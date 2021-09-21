@@ -1,4 +1,4 @@
-﻿namespace LexicalAnalyzer.Models
+﻿namespace LexicalAnalyzer.Constants
 {
     public static class AnalyzerConstants
     {

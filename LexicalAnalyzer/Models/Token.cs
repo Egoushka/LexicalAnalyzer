@@ -16,6 +16,7 @@ namespace LexicalAnalyzer.Models
         public int PositionInString { get; init; }
 
         public Token(){}
+
         public Token(TokenType tokenType, string lexeme, int startPosition, int length, int positionInString)
         {
             TokenType = tokenType.ToString();
@@ -24,7 +25,5 @@ namespace LexicalAnalyzer.Models
             Length = length;
             PositionInString = positionInString;
         }
-
-       
     }
 }

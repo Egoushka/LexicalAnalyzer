@@ -2,30 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
+using LexicalAnalyzer.Constants;
+using LexicalAnalyzer.Models;
 using LexicalAnalyzer.Tools;
-using Newtonsoft.Json;
 
-namespace LexicalAnalyzer.Models
+namespace LexicalAnalyzer.Services
 {
-    public class Expression
+    public class ExpressionService
     {
-        public int UniqueTokensCount { get; set; } = default;
-        private string Value { get; set; }
-        private string ValueWithNoWhiteSpaces { get; }
-        public List<Token> Tokens { get; set; } = new();
-        private int LengthOfValueWithNoSpaces { get; set; } 
-        
-        public Expression(string value)
+        public List<Token> Tokens { get; set; }
+        public int UniqueTokensCount { get; set; }
+        private string Query { get; set; }
+        private string ValueWithNoWhiteSpaces { get; set; }
+
+        public void ProcessQuery(string query)
         {
-            Value = value;
-            ValueWithNoWhiteSpaces = value.ReplaceWhitespace("");
-            LengthOfValueWithNoSpaces = ValueWithNoWhiteSpaces.Length;
+            Query = query;
+            
+            ValueWithNoWhiteSpaces = query.ReplaceWhitespace("");
+
+            Tokens = new List<Token>();
+            UniqueTokensCount = default;
+            
+            PickOutLexemes();
         }
-      
-        public void PickOutLexemes()
+        private void PickOutLexemes()
         {
             int index = 0;
             
@@ -33,8 +34,6 @@ namespace LexicalAnalyzer.Models
             {
                 ++index;
             }
-
-            Console.WriteLine(JsonConvert.SerializeObject(Tokens, Formatting.Indented));
         }
 
         private int PickOutNextLexem(ref int index)
@@ -49,7 +48,7 @@ namespace LexicalAnalyzer.Models
             
             AddNewToken(lexeme, lexemePositionInString, nextLexem - index);
             
-            if(nextLexem >= Value.Length)
+            if(nextLexem >= Query.Length)
                 return -1;
             
             index = nextLexem;
@@ -59,7 +58,7 @@ namespace LexicalAnalyzer.Models
 
         private int SkipAllSeparators(int index)
         {
-            while (index < Value.Length && AnalyzerConstants.Separators.Any(item => Value[index] == item))
+            while (index < Query.Length && AnalyzerConstants.Separators.Any(item => Query[index] == item))
             {
                 ++index;
             }
@@ -68,24 +67,24 @@ namespace LexicalAnalyzer.Models
         }
         private string PickOutLexeme(ref int nextLexemIndex)
         {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
             
             bool flag = false;
             int i = nextLexemIndex;
 
-            for (; i < Value.Length; i++)
+            for (; i < Query.Length; i++)
             {
-                if (AnalyzerConstants.Separators.Any(item => Value[i] == item) && flag == false)
+                if (AnalyzerConstants.Separators.Any(item => Query[i] == item) && flag == false)
                 {
                     break;
                 }
 
-                if (AnalyzerConstants.LiteralSeparators.Any(item => Value[i] == item))
+                if (AnalyzerConstants.LiteralSeparators.Any(item => Query[i] == item))
                 {
                     flag = !flag;
                 }
 
-                builder.Append(Value[i]);
+                builder.Append(Query[i]);
             }
 
             nextLexemIndex = i;
